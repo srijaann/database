@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import axios from "axios";
-import { Card, CardGroup, Form, Button } from "react-bootstrap";
+import "./City.css";
 
 export default class Cities extends Component {
   state = {
     cities: [],
-    city_id:"",    
+    city_id: "",
     city: "",
     country_id: ""
   };
@@ -14,101 +14,104 @@ export default class Cities extends Component {
     e.preventDefault();
     // console.log(this.state);
     let request = {
-        city_id :this.state.city_id,
+    
       city: this.state.city,
-      country_id: this.state.country_id    };
+      country_id: this.state.country_id
+    };
     //console.log(request);
     axios
-      .post("http://localhost:3200/city", request)
+      .post("http://localhost:3200/newcity", request)
       .then(response => {
         console.log(response);
       })
       .catch(error => {
         console.log(error);
       });
-     this.render()
+    this.render();
+  };
+
+  onDeleteCity = async city_id => {
+    city_id = prompt();
+
+    await axios.delete(`http://localhost:3200/deletecity/${city_id}`);
   };
 
   onChangeHandler = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  citi = axios.get("http://localhost:3200/getcities")
-  .then(res => {
+  citi = axios.get("http://localhost:3200/getcities").then(res => {
     const citi = res.data.slice(0, 100);
-       this.setState({ cities: citi });
+    console.log(citi);
+
+    this.setState({ cities: citi });
   });
 
   render() {
-    let { city_id,city, country_id } = this.state;
+    let { city_id, city, country_id } = this.state;
     return (
       <React.Fragment>
-        <Form
-          onSubmit={this.submitHandler}
-          style={{
-            width: "50%",
-            marginRight: "auto",
-            marginLeft: "auto",
-            marginTop: "80px",
-            marginBottom: "80px",
-            border: "2px solid rgb(206,212,218)",
-            padding: "30px"
-          }}
-        >
-          <Form.Group>
-            <Form.Label>City Name</Form.Label>
-            
-            <Form.Control
+        <div>
+          <form className="form-group city " onSubmit={this.submitHandler}>
+            <label>City Name</label>
+            <input
               type="text"
-              name="city"
+              className="form-control"
+              name="city_id"
               placeholder="City Name"
               value={city}
               onChange={this.onChangeHandler}
-            /><br></br>
-            <Form.Text className="text-muted">
-              We will update the data for you
-            </Form.Text>
-          </Form.Group>
-
-          <Form.Group>
-            <Form.Label>Country ID</Form.Label>
-            <Form.Control
-              name="country_id"
+            />
+            <label>Country Name</label>
+            <input
+              className="form-control"
+              type="text"
+              name="city_id"
+              placeholder="Country Name"
               value={country_id}
               onChange={this.onChangeHandler}
-              type="number"
-              placeholder="Country ID"
             />
-          </Form.Group>
-
-          <Button variant="secondary" type="submit">
-            Submit
-          </Button>
-        </Form>
-
-        <CardGroup>
-          {this.state.cities.map(city => (
-            <Card
-              key={city.city_id}
-              style={{
-                minWidth: "30%",
-                textAlign: "center",
-                padding: "25px",
-                marginRight: "auto",
-                marginLeft: "auto"
-              }}
+            <br></br>
+            <button type="button" className="btn btn-primary">
+              Add City{" "}
+            </button>{" "}
+            &nbsp;
+            <button type="button" className="btn btn-success">
+              Update City{" "}
+            </button>
+            &nbsp;
+            <button
+              type="button"
+              className="btn btn-danger"
+              onClick={() => this.onDeleteCity(city_id)}
             >
-              <Card.Title>{city.city_id}</Card.Title>
-              <Card.Title>{city.city}</Card.Title>
-              <Card.Text>{city.last_update}</Card.Text>
-              <Card.Subtitle className="mb-2 text-muted">
-                Country code: {city.country_id}
-              </Card.Subtitle>
-            </Card>
-          ))}
-        </CardGroup>
+              Delete City{" "}
+            </button>
+          </form>
+        </div>
 
-        {/* Form,Form.Group,Button,Form.Label,Form.Control */}
+        <div className="container">
+          <table className="table table-striped table-light">
+            <thead>
+              <tr>
+                <th>City ID</th>
+                <th>City Name</th>
+                <th>Country ID</th>
+                <th>Last Update</th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.cities.map(city => (
+                <tr>
+                  <th>{city.city_id}</th>
+                  <td>{city.city}</td>
+                  <td>{city.country_id}</td>
+                  <td>{city.last_update}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </React.Fragment>
     );
   }

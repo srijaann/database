@@ -1,0 +1,17 @@
+.city {
+  width: 50%;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 80px;
+  margin-bottom: 80px;
+  border: 2px solid rgb(206, 212, 218);
+  padding: 30px;
+}
+
+.card-city {
+  min-width: 30%;
+  text-align: center;
+  padding: 25%;
+  margin-right: auto;
+  margin-left: auto;
+}
